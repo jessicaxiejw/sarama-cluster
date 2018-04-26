@@ -1,6 +1,7 @@
 package cluster
 
 import (
+	"fmt"
 	"sort"
 	"sync"
 	"sync/atomic"
@@ -271,24 +272,27 @@ func (c *Consumer) CommitOffsets() error {
 // Close safely closes the consumer and releases all resources
 func (c *Consumer) Close() (err error) {
 	c.closeOnce.Do(func() {
+		fmt.Println("HERE 1")
 		close(c.dying)
 		<-c.dead
-
+		fmt.Println("HERE 2")
 		if e := c.release(); e != nil {
 			err = e
-		}
+		}fmt.Println("HERE 3")
 		if e := c.consumer.Close(); e != nil {
 			err = e
 		}
+		fmt.Println("HERE 4")
 		close(c.messages)
 		close(c.errors)
-
+		fmt.Println("HERE 5")
 		if e := c.leaveGroup(); e != nil {
 			err = e
 		}
+		fmt.Println("HERE 6")
 		close(c.partitions)
 		close(c.notifications)
-
+		fmt.Println("HERE 7")
 		// drain
 		for range c.messages {
 		}
@@ -299,13 +303,15 @@ func (c *Consumer) Close() (err error) {
 		}
 		for range c.notifications {
 		}
-
+		fmt.Println("HERE 8")
 		c.client.release()
+		fmt.Println("HERE 9")
 		if c.ownClient {
 			if e := c.client.Close(); e != nil {
 				err = e
 			}
 		}
+		fmt.Println("HERE 10")
 	})
 	return
 }
