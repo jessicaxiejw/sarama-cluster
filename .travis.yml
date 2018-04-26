@@ -6,7 +6,7 @@ go:
 install:
   - go get -u github.com/golang/dep/cmd/dep
   - dep ensure
-  - docker-compose -f testdata/docker-compose.yml -d up
+  - docker-compose -f testdata/docker-compose.yml up -d
 script:
   - make default test-race
 services:
